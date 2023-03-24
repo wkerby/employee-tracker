@@ -13,7 +13,7 @@ class Query {
     }
 
     viewRoles() { //returns all records in role table
-        db.query('SELECT * FROM role', (err, results) => {
+        db.query('SELECT role.id AS id, role.title AS title, role.salary AS salary, department.name As department FROM role JOIN department ON department.id = role.department_id', (err, results) => {
             console.log(results)
         })
     }
@@ -82,10 +82,10 @@ class Query {
 const query = new Query();
 // query.viewDepartments();
 // query.addRole('Boss of Everything', 900000, 'Safety');
-// query.viewRoles();
+query.viewRoles();
 // query.addEmployee('Colin', 'Harman', 'VDC Manager', 'Douglas MacArthur');
 // query.updateEmployee('Colin Harman', 'Safety Manager');
-query.viewEmployees();
+// query.viewEmployees();
 
 
 module.exports = {
