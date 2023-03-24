@@ -22,15 +22,15 @@ const doNext = () => {
     inquirer.prompt(doNextQuestion).then(answers => {
         switch (answers.next) {
             case "View all departments":
-                pass;
+                getDepartments();
             case "View all roles":
-                pass;
+                getRoles();
             case "View all employees":
-                pass;
+                getEmployees();
             case "Add a department":
                 departmentAdd();
             case "Add a role":
-                pass;
+                roleAdd();
             case "Add an employee":
                 pass;
             case "Update an employee role":
@@ -39,6 +39,42 @@ const doNext = () => {
                 pass;
         }
     })
+}
+
+//add function to return all departments to user
+const getDepartments = () => {
+    let employeeData = new Query();
+    try {
+        employeeData.viewDepartments();
+    }
+    catch (err) {
+        console.log("There was an issue retrieving department data. Please try again.");
+        doNext();
+    }
+}
+
+//add function to return all roles to user
+const getRoles = () => {
+    let employeeData = new Query();
+    try {
+        employeeData.viewRoles();
+    }
+    catch (err) {
+        console.log("There was an issue retrieving role data. Please try again.")
+        doNext();
+    }
+}
+
+//add function to return all employees to user
+const getEmployees = () => {
+    let employeeData = new Query();
+    try {
+        employeeData.viewEmployees();
+    }
+    catch (err) {
+        console.log("There was an issue retrieving employee data. Please try again.")
+        doNext();
+    }
 }
 
 //add function to ask department add questions and to add department to employee_db
@@ -100,3 +136,5 @@ const roleAdd = () => {
 
     })
 }
+
+//add function to ask employee add questions
