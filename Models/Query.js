@@ -61,6 +61,20 @@ class Query {
 
     }
 
+    updateEmployee(employee_name, employee_role) {
+        //grab the id of the employee based off of his/her name
+        let employeeFirst = employee_name.split(' ')[0]; //split employee name into first and last name in agreeance with fields in employee table
+        let employeeLast = employee_name.split(' ')[1];
+        db.query(`SELECT id FROM employee WHERE first_name = '${employeeFirst}' && last_name = '${employeeLast}'`, (err, results) => {
+            let employeeId = results[0].id; //assumes there are no employees with same exact first and last name
+            //grab the id of the employee's new role
+            db.query(`SELECT id FROM role WHERE title = '${employee_role}'`, (err, results) => {
+                let roleId = results[0].id; //assumes there are no duplicate roles
+                //update appropriate employee record with new title
+                db.query(`UPDATE employee SET role_id = ${roleId} WHERE id = ${employeeId}`);
+            })
+        })
+    }
 
 
 }
@@ -70,7 +84,9 @@ const query = new Query();
 // query.addRole('Boss of Everything', 900000, 'Safety');
 // query.viewRoles();
 // query.addEmployee('Colin', 'Harman', 'VDC Manager', 'Douglas MacArthur');
+// query.updateEmployee('Colin Harman', 'Safety Manager');
 query.viewEmployees();
+
 
 module.exports = {
     Query
