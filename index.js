@@ -34,7 +34,7 @@ const doNext = () => {
                 case "Add a role":
                     roleAdd(employeeData);
                 case "Add an employee":
-                    employeeAdd(employeeData);
+                    employeeData.addEmployee();
                 case "Update an employee role":
                     pass;
             }
@@ -141,41 +141,6 @@ const roleAdd = (query) => {
     })
 }
 
-//add function to ask employee add questions
-const employeeAdd = (query) => {
-    let employeeAddQuestions = [
-        {
-            type: 'input',
-            message: "What is the employee's first name?",
-            name: 'employeefirst',
-        },
-        {
-            type: 'input',
-            message: "What is the employee's last name?",
-            name: 'employeelast',
-        },
-        {
-            type: 'input',
-            message: "What is the employee's role?",
-            name: 'employeerole', //list of employee roles
-        },
-        {
-            type: 'input',
-            message: "Who is the employee's manager?",
-            name: 'employeemanager', //list of employee first and last names concatenated
-        }
-    ]
-    inquirer.prompt(employeeAddQuestions).then(answers => {
-        try {
-            query.addEmployee(answers.employeefirst, answers.employeelast, answers.employeerole, answers.employeemanager);
-        }
-        catch (err) {
-            console.log("There was an error adding this new employee. Please try again");
-            employeeAdd();
-        }
-    })
-
-}
 
 //add function to update existing employee record
 const employeeUpdate = () => {

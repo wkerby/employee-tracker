@@ -42,22 +42,59 @@ class Query {
         })
     }
 
-    addEmployee(employee_first_name, employee_last_name, employee_role, employee_manager) {
-        //grab the id of the role assigned to the employee
-        db.query(`SELECT id FROM role WHERE title = '${employee_role}'`, (err, results) => {
-            let roleId = results[0].id; //this assumes that there are no duplicate ids
-            //get the id of the employee's manager
-            let managerFirstName = employee_manager.split(' ')[0];
-            let managerLastName = employee_manager.split(' ')[1];
-            db.query(`SELECT id FROM employee WHERE first_name = '${managerFirstName}' && last_name = '${managerLastName}'`, (err, results) => {
-                let managerId = results[0].id;
-                db.query("SELECT id FROM employee ORDER BY id DESC LIMIT 1", (err, results) => {
-                    let nextId = results[0].id + 1;
-                    db.query(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (${nextId}, '${employee_first_name}', '${employee_last_name}', ${roleId}, ${managerId})`)
-                })
-            })
-        })
+    addEmployee() {
+        //obtain list of all employees
+        db.query("SELECT CONCAT(first_name,' ', last_name) AS name from employee", (err, results) => {
+            var employeeList = [];
+            results.forEach(object => employeeList.push(object.name));
+            db.query("SELECT title FROM role", (err, results) => {
+                var roleList = [];
+                results.forEach(object => roleList.push(object.name));
+                let employeeAddQuestions = [
+                    {
+                        type: 'input',
+                        message: "What is the employee's first name?",
+                        name: 'employeefirst',
+                    },
+                    {
+                        type: 'input',
+                        message: "What is the employee's last name?",
+                        name: 'employeelast',
+                    },
+                    {
+                        type: 'list',
+                        message: "What is the employee's role?",
+                        name: 'employeerole',
+                        choices: roleList, //list of employee roles
+                    },
+                    {
+                        type: 'list',
+                        message: "Who is the employee's manager?",
+                        name: 'employeemanager',
+                        choices: employeeList, //list of employee first and last names concatenated
+                    }
+                ]
+                inquirer.prompt(employeeAddQuestions).then(answers => {
+                    //grab the id of the role assigned to the employee
+                    db.query(`SELECT id FROM role WHERE title = '${answers.employeerole}'`, (err, results) => {
+                        let roleId = results[0].id; //this assumes that there are no duplicate ids
+                        //get the id of the employee's manager
+                        let managerFirstName = answers.employeemanager.split(' ')[0];
+                        let managerLastName = answers.employeemanager.split(' ')[1];
+                        db.query(`SELECT id FROM employee WHERE first_name = '${managerFirstName}' && last_name = '${managerLastName}'`, (err, results) => {
+                            let managerId = results[0].id;
+                            db.query("SELECT id FROM employee ORDER BY id DESC LIMIT 1", (err, results) => {
+                                let nextId = results[0].id + 1;
+                                db.query(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (${nextId}, '${answers.employeefirst}', '${answers.employeelast}', ${roleId}, ${managerId})`)
+                            })
+                        })
+                    })
 
+                })
+
+            })
+
+        })
 
     }
 
