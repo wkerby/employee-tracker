@@ -1,8 +1,8 @@
 //requirer inquirer 
 const inquirer = require("inquirer");
 
-//create instance of "Query" object
-//TO DO: create a query class with methods to query data
+//bring in Query class
+const Query = require("./Models/Query").Query;
 
 //create function to ask question
 
@@ -39,4 +39,23 @@ const doNext = () => {
                 pass;
         }
     })
+}
+
+//add function to ask department add questions
+const departmentAdd = () => {
+    let departmentAddQuestion = [
+        {
+            type: 'input',
+            message: 'What is the name of the department?',
+            name: 'departmentname',
+        }
+
+    ]
+
+    inquirer.prompt(departmentAddQuestion).then(answers => {
+        let employeeData = new Query();
+
+
+    })
+
 }
