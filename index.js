@@ -32,7 +32,7 @@ const doNext = () => {
             case "Add a role":
                 roleAdd();
             case "Add an employee":
-                pass;
+                employeeAdd();
             case "Update an employee role":
                 pass;
             case "Quit":
@@ -124,7 +124,7 @@ const roleAdd = () => {
             name: 'roledepartment',
         }
     ]
-    inquire.prompt(roleAddQuestions).then(answers => {
+    inquirer.prompt(roleAddQuestions).then(answers => {
         let employeeData = new Query();
         try {
             employeeData.addRole(answers.rolename, answers.rolesalary, answers.roledepartment);
@@ -138,3 +138,39 @@ const roleAdd = () => {
 }
 
 //add function to ask employee add questions
+const employeeAdd = () => {
+    let employeeAddQuestions = [
+        {
+            type: 'input',
+            message: "What is the employee's first name?",
+            name: 'employeefirst',
+        },
+        {
+            type: 'input',
+            message: "What is the employee's last name?",
+            name: 'employeelast',
+        },
+        {
+            type: 'input',
+            message: "What is the employee's role?",
+            name: 'employeerole',
+        },
+        {
+            type: 'input',
+            message: "Who is the employee's manager?",
+            name: 'employeemanager',
+        }
+    ]
+    inquirer.prompt(employeeAddQuestions).then(answers => {
+        let employeeData = new Query();
+        try {
+            employeeData.addEmployee(answers.employeefirst, answers.employeelast, answers.employeerole, answers.employeemanager);
+        }
+        catch (err) {
+            console.log("There was an error adding this new employee. Please try again");
+            employeeAdd();
+        }
+    })
+
+}
+
