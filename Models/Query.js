@@ -76,6 +76,16 @@ class Query {
         })
     }
 
+    listEmployees() {
+        //return list of employee names concatenated
+        db.query("SELECT CONCAT(first_name,' ', last_name) AS name from employee", (err, results) => {
+            var employeeList = [];
+            results.forEach(object => employeeList.push(object.name));
+            console.log(employeeList);
+
+        })
+    }
+
 }
 
 const query = new Query();
@@ -84,7 +94,7 @@ const query = new Query();
 // query.viewRoles();
 // query.addEmployee('Colin', 'Harman', 'VDC Manager', 'Douglas MacArthur');
 // query.updateEmployee('Colin Harman', 'Safety Manager');
-query.viewEmployees();
+query.listEmployees();
 
 
 
