@@ -54,7 +54,7 @@ const departmentAdd = () => {
 
     inquirer.prompt(departmentAddQuestion).then(answers => {
         let employeeData = new Query();
-
+        employeeData.addDepartment(answers.departmentname);
 
     })
 
