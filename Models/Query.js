@@ -1,3 +1,5 @@
+const ctable = require('console.table');
+const inquirer = require('inquirer');
 const connection = require("../connection");
 const db = connection.db;
 
@@ -7,20 +9,20 @@ class Query {
     }
 
     viewDepartments() { //returns all records in department table
-        db.query('SELECT * FROM department', (err, results) => {
-            console.log(results)
+        db.query('SELECT * FROM department', (err, answers) => {
+            console.table(answers);
         })
     }
 
     viewRoles() { //returns all records in role table
-        db.query('SELECT role.id AS id, role.title AS title, role.salary AS salary, department.name As department FROM role JOIN department ON department.id = role.department_id', (err, results) => {
-            console.log(results)
+        db.query('SELECT role.id AS id, role.title AS title, role.salary AS salary, department.name As department FROM role JOIN department ON department.id = role.department_id', (err, answers) => {
+            console.table(answers);
         })
     }
 
     viewEmployees() { //returns all records in employee table
-        db.query("SELECT table1.id, table1.first_name AS employee_first, table1.last_name AS employee_last, role.title, department.name as department, role.salary, CONCAT(table2.first_name,' ',table2.last_name) AS manager FROM employee table1 JOIN employee table2 ON table1.manager_id = table2.id JOIN role ON table1.role_id = role.id JOIN department ON role.department_id = department.id", (err, results) => {
-            console.log(results)
+        db.query("SELECT table1.id, table1.first_name AS employee_first, table1.last_name AS employee_last, role.title, department.name as department, role.salary, CONCAT(table2.first_name,' ',table2.last_name) AS manager FROM employee table1 JOIN employee table2 ON table1.manager_id = table2.id JOIN role ON table1.role_id = role.id JOIN department ON role.department_id = department.id", (err, answers) => {
+            console.table(answers);
         })
     }
 
@@ -45,11 +47,11 @@ class Query {
     addEmployee() {
         //obtain list of all employees
         db.query("SELECT CONCAT(first_name,' ', last_name) AS name from employee", (err, results) => {
-            let employeeList = [];
+            var employeeList = [];
             results.forEach(object => employeeList.push(object.name));
             db.query("SELECT title FROM role", (err, results) => {
-                let roleList = [];
-                results.forEach(object => roleList.push(object.name));
+                var roleList = [];
+                results.forEach(object => roleList.push(object.title));
                 let employeeAddQuestions = [
                     {
                         type: 'input',
@@ -104,7 +106,7 @@ class Query {
             results.forEach(object => employeeList.push(object.name));
             db.query("SELECT title FROM role", (err, results) => {
                 let roleList = [];
-                results.forEach(object => roleList.push(object.name));
+                results.forEach(object => roleList.push(object.title));
                 let employeeUpdateQuestions = [
                     {
                         type: 'list',
@@ -116,9 +118,11 @@ class Query {
                         type: 'list',
                         message: "Which role would you like to assign to the selected employee?", //list of available employee roles
                         name: 'employeerole',
+                        choices: roleList,
 
                     }
                 ]
+
                 inquirer.prompt(employeeUpdateQuestions).then(answers => {
                     //grab the id of the employee based off of his/her name
                     let employeeFirst = answers.employeename.split(' ')[0]; //split employee name into first and last name in agreeance with fields in employee table
@@ -146,13 +150,19 @@ class Query {
 
 }
 
-const query = new Query();
+// const query = new Query();
 // query.viewDepartments();
+// query.viewRoles();
+// query.viewEmployees();
+// query.addDepartment();
+// query.addRole();
+// query.addEmployee();
+// query.updateEmployee();
 // query.addRole('Boss of Everything', 900000, 'Safety');
 // query.viewRoles();
 // query.addEmployee('Colin', 'Harman', 'VDC Manager', 'Douglas MacArthur');
 // query.updateEmployee('Colin Harman', 'Safety Manager');
-query.listEmployees();
+
 
 
 

@@ -25,26 +25,33 @@ const doNext = () => {
             switch (answers.next) {
                 case "View all departments":
                     getDepartments(employeeData);
+                    break;
                 case "View all roles":
                     getRoles(employeeData);
+                    break;
                 case "View all employees":
                     getEmployees(employeeData);
+                    break;
                 case "Add a department":
                     departmentAdd(employeeData);
+                    break;
                 case "Add a role":
                     roleAdd(employeeData);
+                    break;
                 case "Add an employee":
                     employeeData.addEmployee();
+                    break;
                 case "Update an employee role":
                     employeeData.updateEmployee();
+                    break;
             }
 
-            doNext();
+            // doNext();
 
         }
-
         else {
-            pass;
+            //how do I end the program when end user selects "Quit"
+
         }
 
     })
@@ -141,3 +148,4 @@ const roleAdd = (query) => {
     })
 }
 
+doNext();
