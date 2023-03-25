@@ -46,7 +46,7 @@ const doNext = () => {
                     break;
             }
 
-            // doNext();
+            doNext();
 
         }
         else {
