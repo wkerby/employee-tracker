@@ -36,7 +36,7 @@ const doNext = () => {
                 case "Add an employee":
                     employeeData.addEmployee();
                 case "Update an employee role":
-                    pass;
+                    employeeData.updateEmployee();
             }
 
             doNext();
@@ -141,19 +141,3 @@ const roleAdd = (query) => {
     })
 }
 
-
-//add function to update existing employee record
-const employeeUpdate = () => {
-    let employeeUpdateQuestions = [
-        {
-            type: 'input',
-            message: "Which employee's role would you like to update?", //list of employee first and last names concatenated
-            name: 'employeefirst',
-        },
-        {
-            type: 'input',
-            message: "Which role would you like to assign to the selected employee?", //list of available employee roles
-            name: 'employeelast',
-        }
-    ]
-}
