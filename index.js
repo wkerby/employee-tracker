@@ -137,15 +137,15 @@ const roleAdd = (query) => {
         }
     ]
     inquirer.prompt(roleAddQuestions).then(answers => {
-        try {
-            query.addRole(answers.rolename, answers.rolesalary, answers.roledepartment);
-        }
 
-        catch (err) {
-            console.log("Department name is not valid. Please try again.")
-            roleAdd();
-        }
+        query.addRole(answers.rolename, answers.rolesalary, answers.roledepartment);
+        console.log(`${answers.rolename} added!`);
+        doNext();
 
+
+    }).catch(err => {
+        console.log("Department name provided is not valid. Please try again.")
+        doNext();
 
     })
 
