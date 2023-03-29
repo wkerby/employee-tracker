@@ -82,53 +82,53 @@ class Query {
     }
 
 
-    updateEmployee() {
-        db.query("SELECT CONCAT(first_name,' ', last_name) AS name from employee", (err, results) => {
-            let employeeList = [];
-            results.forEach(object => employeeList.push(object.name));
-            db.query("SELECT title FROM role", (err, results) => {
-                let roleList = [];
-                results.forEach(object => roleList.push(object.title));
-                let employeeUpdateQuestions = [
-                    {
-                        type: 'list',
-                        message: "Which employee's role would you like to update?", //list of employee first and last names concatenated
-                        name: 'employeename',
-                        choices: employeeList,
-                    },
-                    {
-                        type: 'list',
-                        message: "Which role would you like to assign to the selected employee?", //list of available employee roles
-                        name: 'employeerole',
-                        choices: roleList,
+    // updateEmployee() {
+    //     db.query("SELECT CONCAT(first_name,' ', last_name) AS name from employee", (err, results) => {
+    //         let employeeList = [];
+    //         results.forEach(object => employeeList.push(object.name));
+    //         db.query("SELECT title FROM role", (err, results) => {
+    //             let roleList = [];
+    //             results.forEach(object => roleList.push(object.title));
+    //             let employeeUpdateQuestions = [
+    //                 {
+    //                     type: 'list',
+    //                     message: "Which employee's role would you like to update?", //list of employee first and last names concatenated
+    //                     name: 'employeename',
+    //                     choices: employeeList,
+    //                 },
+    //                 {
+    //                     type: 'list',
+    //                     message: "Which role would you like to assign to the selected employee?", //list of available employee roles
+    //                     name: 'employeerole',
+    //                     choices: roleList,
 
-                    }
-                ]
+    //                 }
+    //             ]
 
-                inquirer.prompt(employeeUpdateQuestions).then(answers => {
-                    //grab the id of the employee based off of his/her name
-                    let employeeFirst = answers.employeename.split(' ')[0]; //split employee name into first and last name in agreeance with fields in employee table
-                    let employeeLast = answers.employeename.split(' ')[1];
-                    db.query(`SELECT id FROM employee WHERE first_name = '${employeeFirst}' && last_name = '${employeeLast}'`, (err, results) => {
-                        let employeeId = results[0].id; //assumes there are no employees with same exact first and last name
-                        //grab the id of the employee's new role
-                        db.query(`SELECT id FROM role WHERE title = '${answers.employeerole}'`, (err, results) => {
-                            let roleId = results[0].id; //assumes there are no duplicate roles
-                            //update appropriate employee record with new title
-                            db.query(`UPDATE employee SET role_id = ${roleId} WHERE id = ${employeeId}`);
-                        })
-                    })
-
-
-                })
-
-            })
+    //             inquirer.prompt(employeeUpdateQuestions).then(answers => {
+    //                 //grab the id of the employee based off of his/her name
+    //                 let employeeFirst = answers.employeename.split(' ')[0]; //split employee name into first and last name in agreeance with fields in employee table
+    //                 let employeeLast = answers.employeename.split(' ')[1];
+    //                 db.query(`SELECT id FROM employee WHERE first_name = '${employeeFirst}' && last_name = '${employeeLast}'`, (err, results) => {
+    //                     let employeeId = results[0].id; //assumes there are no employees with same exact first and last name
+    //                     //grab the id of the employee's new role
+    //                     db.query(`SELECT id FROM role WHERE title = '${answers.employeerole}'`, (err, results) => {
+    //                         let roleId = results[0].id; //assumes there are no duplicate roles
+    //                         //update appropriate employee record with new title
+    //                         db.query(`UPDATE employee SET role_id = ${roleId} WHERE id = ${employeeId}`);
+    //                     })
+    //                 })
 
 
-        })
+    //             })
+
+    //         })
 
 
-    }
+    //     })
+
+
+    // }
 
 }
 

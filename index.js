@@ -42,7 +42,7 @@ const doNext = () => {
                 employeeAdd(employeeData);
                 break;
             case "Update an employee role":
-                employeeData.updateEmployee();
+                employeeUpdate(employeeData);
                 break;
             default:
                 quitProgram();
@@ -160,12 +160,12 @@ const employeeAdd = (query) => {
         else {
             var employees = results;
         }
-        query.listRoles(function (err, roleList) {
+        query.listRoles(function (err, results) {
             if (err) {
                 console.error(err);
             }
             else {
-                var roles = roleList;
+                var roles = results;
             }
             let employeeAddQuestions = [
                 {
@@ -206,11 +206,10 @@ const employeeAdd = (query) => {
                         })
                     })
                 })
-                console.log(`${answers.employeefirst}` + ` ${answers.employeelast} added to database!`)
+                console.log(`${answers.employeefirst} ${answers.employeelast} added to database!`)
                 doNext();
             }).catch(err => {
-                console.log(err)
-                // console.log("Employee's role or manager is invalid. Please try again");
+                console.log("Employee's role or manager is invalid. Please try again");
                 doNext();
             })
         });
@@ -220,12 +219,66 @@ const employeeAdd = (query) => {
 
 }
 
-const employeeUpdate = () => {
+const employeeUpdate = (query) => {
+    query.listEmployees(function (err, results) {
+        if (err) {
+            console.error(err);
+        }
+        else {
+            var employees = results;
+        }
+        query.listRoles(function (err, results) {
+            if (err) {
+                console.error(err);
+            }
+            else {
+                var roles = results;
+            }
+            let employeeUpdateQuestions = [
+                {
+                    type: 'list',
+                    message: "Which employee's role would you like to update?", //list of employee first and last names concatenated
+                    name: 'employeename',
+                    choices: employees,
+                },
+                {
+                    type: 'list',
+                    message: "Which role would you like to assign to the selected employee?", //list of available employee roles
+                    name: 'employeerole',
+                    choices: roles,
+
+                }
+            ]
+
+            inquirer.prompt(employeeUpdateQuestions).then(answers => {
+                //grab the id of the employee based off of his/her name
+                let employeeFirst = answers.employeename.split(' ')[0]; //split employee name into first and last name in agreeance with fields in employee table
+                let employeeLast = answers.employeename.split(' ')[1];
+                query.db.query(`SELECT id FROM employee WHERE first_name = '${employeeFirst}' && last_name = '${employeeLast}'`, (err, results) => {
+                    let employeeId = results[0].id; //assumes there are no employees with same exact first and last name
+                    //grab the id of the employee's new role
+                    query.db.query(`SELECT id FROM role WHERE title = '${answers.employeerole}'`, (err, results) => {
+                        let roleId = results[0].id; //assumes there are no duplicate roles
+                        //update appropriate employee record with new title
+                        query.db.query(`UPDATE employee SET role_id = ${roleId} WHERE id = ${employeeId}`);
+                    })
+                })
+                console.log(`${employeeFirst} ${employeeLast} updated to ${answers.employeerole}!`)
+                doNext();
+            }).catch(err => {
+                console.error(err);
+                console.log("Unable to update employee role. Please try again.");
+                doNext();
+            })
+        })
+    })
+
+
 
 }
 
 function quitProgram() {
-    console.log("end");
+    console.log("Thanks for checking in!");
     process.exit();
 
 }
