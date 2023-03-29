@@ -20,37 +20,32 @@ const doNext = () => {
 
     ]
     inquirer.prompt(doNextQuestion).then(answers => {
-        if (answers.next != "Quit") {
-            let employeeData = new Query();
-            switch (answers.next) {
-                case "View all departments":
-                    getDepartments(employeeData);
-                    break;
-                case "View all roles":
-                    getRoles(employeeData);
-                    break;
-                case "View all employees":
-                    getEmployees(employeeData);
-                    break;
-                case "Add a department":
-                    departmentAdd(employeeData);
-                    break;
-                case "Add a role":
-                    roleAdd(employeeData);
-                    break;
-                case "Add an employee":
-                    employeeData.addEmployee();
-                    break;
-                case "Update an employee role":
-                    employeeData.updateEmployee();
-                    break;
-            }
 
-            doNext();
-
-        }
-        else {
-            //how do I end the program when end user selects "Quit"
+        let employeeData = new Query();
+        switch (answers.next) {
+            case "View all departments":
+                getDepartments(employeeData);
+                break;
+            case "View all roles":
+                getRoles(employeeData);
+                break;
+            case "View all employees":
+                getEmployees(employeeData);
+                break;
+            case "Add a department":
+                departmentAdd(employeeData);
+                break;
+            case "Add a role":
+                roleAdd(employeeData);
+                break;
+            case "Add an employee":
+                employeeData.addEmployee();
+                break;
+            case "Update an employee role":
+                employeeData.updateEmployee();
+                break;
+            default:
+                quitProgram();
 
         }
 
@@ -60,36 +55,33 @@ const doNext = () => {
 //add function to return all departments to user
 const getDepartments = (query) => {
 
-    try {
-        query.viewDepartments();
-    }
-    catch (err) {
-        console.log("There was an error retrieving departments")
-    }
 
+    query.viewDepartments().then(([answers]) => {
+        console.log('\n')
+        console.table(answers);
+        doNext();
+    }).catch(err => console.log(err))
 
-}
+};
 
 //add function to return all roles to user
 const getRoles = (query) => {
-    try {
-        query.viewRoles();
-    }
-    catch (err) {
-        console.log("There was an issue retrieving role data. Please try again.")
+
+    query.viewRoles().then(([answers]) => {
+        console.log('\n')
+        console.table(answers);
         doNext();
-    }
+    }).catch(err => console.log(err))
 }
 
 //add function to return all employees to user
 const getEmployees = (query) => {
-    try {
-        query.viewEmployees();
-    }
-    catch (err) {
-        console.log("There was an issue retrieving employee data. Please try again.")
+    query.viewEmployees().then(([answers]) => {
+        console.log('\n')
+        console.table(answers);
         doNext();
-    }
+    }).catch(err => console.log(err))
+
 }
 
 //add function to ask department add questions and to add department to employee_db
@@ -105,16 +97,21 @@ const departmentAdd = (query) => {
 
     inquirer.prompt(departmentAddQuestion).then(answers => {
 
-        try {
-            query.addDepartment(answers.departmentname);
-        }
 
-        catch (err) {
-            console.log("Please enter a valid department name.");
-            departmentAdd();
-        }
+        query.addDepartment(answers.departmentname)
+        console.log(`${answers.departmentname} added!`);
+        doNext();
 
 
+        // catch (err) {
+        //     console.log("Please enter a valid department name.");
+        //     departmentAdd();
+        // }
+
+
+    }).catch(err => {
+        console.log("Please enter a valid department name");
+        doNext();
     })
 
 }
@@ -151,6 +148,12 @@ const roleAdd = (query) => {
 
 
     })
+
+}
+
+function quitProgram() {
+    console.log("end");
+    process.exit();
 
 }
 

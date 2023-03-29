@@ -9,30 +9,23 @@ class Query {
     }
 
     viewDepartments() { //returns all records in department table
-        db.query('SELECT * FROM department', (err, answers) => {
-            console.log('\n')
-            console.table(answers);
-        })
+        return db.promise().query('SELECT * FROM department');
+
     }
 
     viewRoles() { //returns all records in role table
-        db.query('SELECT role.id AS id, role.title AS title, role.salary AS salary, department.name As department FROM role JOIN department ON department.id = role.department_id', (err, answers) => {
-            console.log('\n')
-            console.table(answers);
-        })
+        return db.promise().query('SELECT role.id AS id, role.title AS title, role.salary AS salary, department.name As department FROM role JOIN department ON department.id = role.department_id');
+
     }
 
     viewEmployees() { //returns all records in employee table
-        db.query("SELECT table1.id, table1.first_name AS employee_first, table1.last_name AS employee_last, role.title, department.name as department, role.salary, CONCAT(table2.first_name,' ',table2.last_name) AS manager FROM employee table1 LEFT JOIN employee table2 ON table1.manager_id = table2.id JOIN role ON table1.role_id = role.id JOIN department ON role.department_id = department.id", (err, answers) => {
-            console.log('\n')
-            console.table(answers);
-        })
+        return db.promise().query("SELECT table1.id, table1.first_name AS employee_first, table1.last_name AS employee_last, role.title, department.name as department, role.salary, CONCAT(table2.first_name,' ',table2.last_name) AS manager FROM employee table1 LEFT JOIN employee table2 ON table1.manager_id = table2.id JOIN role ON table1.role_id = role.id JOIN department ON role.department_id = department.id");
     }
 
     addDepartment(department_name) { //takes user input for department name and creates new department record in department table
         db.query("SELECT id FROM department ORDER BY id DESC LIMIT 1", (err, results) => {
             let nextId = results[0].id + 1; //determine next id int to use by grabbing the last id in the table
-            db.query(`INSERT INTO department (id, name) VALUES (${nextId}, '${department_name}')`);
+            return db.query(`INSERT INTO department (id, name) VALUES (${nextId}, '${department_name}')`);
         })
     }
 
