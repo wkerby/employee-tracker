@@ -39,7 +39,7 @@ const doNext = () => {
                 roleAdd(employeeData);
                 break;
             case "Add an employee":
-                employeeData.addEmployee();
+                employeeAdd(employeeData);
                 break;
             case "Update an employee role":
                 employeeData.updateEmployee();
@@ -151,6 +151,79 @@ const roleAdd = (query) => {
 
 }
 
+//add function to ask employee add questions and add employee to employee_db
+const employeeAdd = (query) => {
+    query.listEmployees(function (err, results) {
+        if (err) {
+            console.error(err);
+        }
+        else {
+            var employees = results;
+        }
+        query.listRoles(function (err, roleList) {
+            if (err) {
+                console.error(err);
+            }
+            else {
+                var roles = roleList;
+            }
+            let employeeAddQuestions = [
+                {
+                    type: 'input',
+                    message: "What is the employee's first name?",
+                    name: 'employeefirst',
+                },
+                {
+                    type: 'input',
+                    message: "What is the employee's last name?",
+                    name: 'employeelast',
+                },
+                {
+                    type: 'list',
+                    message: "What is the employee's role?",
+                    name: 'employeerole',
+                    choices: roles, //list of employee roles
+                },
+                {
+                    type: 'list',
+                    message: "Who is the employee's manager?",
+                    name: 'employeemanager',
+                    choices: employees //list of employee first and last names concatenated
+                }
+            ]
+            inquirer.prompt(employeeAddQuestions).then(answers => {
+                //grab the id of the role assigned to the employee
+                query.db.query(`SELECT id FROM role WHERE title = '${answers.employeerole}'`, (err, results) => {
+                    let roleId = results[0].id; //this assumes that there are no duplicate ids
+                    //get the id of the employee's manager
+                    let managerFirstName = answers.employeemanager.split(' ')[0];
+                    let managerLastName = answers.employeemanager.split(' ')[1];
+                    query.db.query(`SELECT id FROM employee WHERE first_name = '${managerFirstName}' && last_name = '${managerLastName}'`, (err, results) => {
+                        let managerId = results[0].id;
+                        query.db.query("SELECT id FROM employee ORDER BY id DESC LIMIT 1", (err, results) => {
+                            let nextId = results[0].id + 1;
+                            query.db.query(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (${nextId}, '${answers.employeefirst}', '${answers.employeelast}', ${roleId}, ${managerId})`);
+                        })
+                    })
+                })
+                console.log(`${answers.employeefirst}` + ` ${answers.employeelast} added to database!`)
+                doNext();
+            }).catch(err => {
+                console.log(err)
+                // console.log("Employee's role or manager is invalid. Please try again");
+                doNext();
+            })
+        });
+
+    })
+
+
+}
+
+const employeeUpdate = () => {
+
+}
+
 function quitProgram() {
     console.log("end");
     process.exit();
@@ -158,3 +231,5 @@ function quitProgram() {
 }
 
 doNext();
+
+module.exports = doNext;
