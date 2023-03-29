@@ -139,7 +139,7 @@ const roleAdd = (query) => {
     inquirer.prompt(roleAddQuestions).then(answers => {
 
         query.addRole(answers.rolename, answers.rolesalary, answers.roledepartment);
-        console.log(`${answers.rolename} added!`);
+        console.log(`${answers.rolename} added to ${answers.roledepartment} department!`);
         doNext();
 
 
