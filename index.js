@@ -59,13 +59,15 @@ const doNext = () => {
 
 //add function to return all departments to user
 const getDepartments = (query) => {
+
     try {
         query.viewDepartments();
     }
     catch (err) {
-        console.log("There was an issue retrieving department data. Please try again.");
-        doNext();
+        console.log("There was an error retrieving departments")
     }
+
+
 }
 
 //add function to return all roles to user
@@ -119,6 +121,7 @@ const departmentAdd = (query) => {
 
 //add function to ask role add questions and to add role to employee_db
 const roleAdd = (query) => {
+
     let roleAddQuestions = [
         {
             type: 'input',
@@ -140,12 +143,15 @@ const roleAdd = (query) => {
         try {
             query.addRole(answers.rolename, answers.rolesalary, answers.roledepartment);
         }
+
         catch (err) {
             console.log("Department name is not valid. Please try again.")
             roleAdd();
         }
 
+
     })
+
 }
 
 doNext();
